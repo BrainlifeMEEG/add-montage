@@ -11,9 +11,8 @@
 #
 # Author: Franco Pestilli
 
-# make output directory
-mkdir -p out_dir
-mkdir -p out_figs
+set -e
+set -x
 
 # run the actual python code.
 #
