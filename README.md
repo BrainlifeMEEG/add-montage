@@ -1,63 +1,67 @@
-# app-add-montage
+# Add Electrode Montage
 
-[![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.444-blue.svg)](https://doi.org/10.25663/bl.app.444)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.769-blue.svg)](https://doi.org/10.25663/brainlife.app.769)
 
 ## Description
 
-Adds a standard electrode montage from the MNE-Python database to raw MEG/EEG data. This app sets channel locations for proper visualization, 3D topography mapping, and source localization. It also allows optional channel renaming to match the montage naming convention.
+Adds a standard electrode montage from the MNE-Python database to raw MEG/EEG data, using
+`mne.channels.make_standard_montage` and `raw.set_montage`. This sets channel locations for
+proper visualization, 3D topography mapping, and source localization. It also allows optional
+channel renaming to match the montage naming convention before the montage is applied.
+
+The app generates:
+- A modified `.fif` file with channel locations set
+- A PNG visualization of electrode positions (`raw.plot_sensors`)
+- A PNG power spectral density plot
+- An HTML report with QC information
+- A `product.json` file with metadata
 
 ## Inputs
 
-- **raw**: MNE raw data file in `.fif` format
+- **`raw`** (`neuro/meeg/mne/raw`): continuous MEG/EEG data to add a montage to (required)
 
 ## Outputs
 
-- **out_dir/raw.fif**: Raw data file with montage locations applied
-- **out_figs/montage.png**: Visualization of electrode positions on the scalp
-- **out_report/report.html**: QC report containing raw data summary and montage information
-- **product.json**: Metadata with channel information and montage details
+- **`out_dir/raw.fif`** (`neuro/meeg/mne/raw`): raw data with montage locations applied
+- **`out_figs/montage.png`**: visualization of electrode positions on the scalp
+- **`out_figs/psd.png`**: power spectral density plot of the raw data
+- **`out_report/report.html`**: QC report containing raw data summary and montage information
+- **`product.json`**: metadata with channel information and montage details
 
 ## Configuration Parameters
 
-### Required
-
-- `raw`: Path to the input MNE raw data file (`.fif` format)
-- `montage`: Name of the standard montage to apply. Common options include:
-  - `standard_1020`: Standard 10-20 system
-  - `standard_1005`: Standard 10-05 system
-  - `GSN-HydroCel-257`: 257-channel EGI montage
-  - `GSN-HydroCel-128`: 128-channel EGI montage
-  - See MNE documentation for complete list of available montages
-
-### Optional
-
-- `rename_channels`: Comma-separated list of channel renamings to apply to the montage. Format: `old_name-new_name,old_name2-new_name2` (e.g., "Cz-E257,Pz-E129")
+| key | type | default | description |
+|-----|------|---------|--------------|
+| `montage` | string (enum) | none (required) | Name of the standard MNE montage to apply (e.g. `standard_1020`, `standard_1005`, `GSN-HydroCel-257`, `GSN-HydroCel-128`). See [MNE's built-in montages](https://mne.tools/stable/generated/mne.channels.make_standard_montage.html) for the full list. |
+| `rename_channels` | string | `""` (optional) | Comma-separated list of channel renamings to apply to the montage before it is set, format `old_name-new_name,old_name2-new_name2` (e.g. `Cz-E257,Pz-E129`), for when channel names in your data differ from the standard montage's names. |
 
 ## Usage
 
-The app reads a raw MNE data file, applies the selected standard montage (optionally renaming channels), and generates:
-1. A modified `.fif` file with channel locations
-2. A PNG visualization of electrode positions
-3. An HTML report with QC information
-4. A product.json file with metadata
+### Running on Brainlife.io
 
-Example configuration:
-```json
-{
-    "raw": "path/to/raw.fif",
-    "montage": "GSN-HydroCel-257",
-    "rename_channels": "Cz-E257,Pz-E129"
-}
+1. Select a raw MEG/EEG `.fif` file as the `raw` input.
+2. Choose the standard `montage` matching your acquisition system.
+3. Optionally set `rename_channels` if your channel names differ from the montage's naming
+   convention.
+4. Submit the task.
+5. Review the electrode positions and PSD plots in the report to confirm the montage was applied
+   correctly.
+
+### Local Testing
+
+```bash
+# Update config.json with your data path and parameters
+# Then run:
+python main.py
 ```
 
 ## Technical Details
 
-- **Execution**: Python with MNE-Python and shared brainlife_utils library
+- **Execution**: Python with MNE-Python and the shared `brainlife_utils` library
 - **Data format**: MNE `.fif` format (compatible with all downstream Brainlife.io apps)
 - **Montage source**: MNE-Python's built-in standard montages
-- **Visualization**: 3D sensor plot with channel names
-- **Report generation**: Automatic HTML report with channel visualization
+- **Visualization**: sensor position plot with channel names, plus a PSD plot
+- **Report generation**: automatic HTML report with channel and montage information
 
 ## Authors
 
@@ -68,9 +72,9 @@ Example configuration:
 
 We kindly ask that you cite the following articles when publishing papers and code using this app:
 
-**brainlife.io: A decentralized and open source cloud platform to support neuroscience research**. Hayashi, S., Caron, B. A., et al. & Pestilli, F. (2023). ArXiv. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10274934/
+Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. Nat Methods 21, 809–813 (2024). https://doi.org/10.1038/s41592-024-02237-2
 
-**MEG and EEG data analysis with MNE-Python**. Gramfort A, et al. & Hämäläinen MS. (2013). Frontiers in Neuroscience, 7(267):1–13. https://doi.org/10.3389/fnins.2013.00267
+Gramfort, A. et al. MEG and EEG data analysis with MNE-Python. Front. Neurosci. 7, 267 (2013). https://doi.org/10.3389/fnins.2013.00267
 
 ## Funding Acknowledgement
 
@@ -80,12 +84,9 @@ brainlife.io is publicly funded and for the sustainability of the project we kin
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 [![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
 [![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://grantome.com/grant/NIH/R01-EB029272-01)
 [![NIH-NIBIB-R01EB030896](https://img.shields.io/badge/NIH_NIBIB-R01EB030896-green.svg)](https://grantome.com/grant/NIH/R01-EB030896-01)
 
-Copyright (c) 2026 MEEG Brainlife team
+## License
 
-This project is licensed under the AGPL-3.0 License - see [license.txt](license.txt) for details.
-
-## Citation
-
-Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. Nat Methods 21, 809–813 (2024). https://doi.org/10.1038/s41592-024-02237-2
+Copyright (c) 2026 MEEG Brainlife team. Licensed under AGPL-3.0, see [license.txt](license.txt).
