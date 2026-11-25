@@ -1,5 +1,48 @@
 # Add Electrode Montage
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Adds a standard MNE electrode or fNIRS montage (10-20, 10-05, BioSemi, EGI and others) to raw MEG/EEG data, with optional channel renaming, and outputs the data, a sensor plot and a QC report.**
+
+Optionally renames channels (old-new pairs) to match the montage naming, builds the montage with mne.channels.make_standard_montage and applies it with raw.set_montage, then saves the raw file, a sensor-position plot, a PSD plot and an HTML QC report. Use it before topographic plotting or source localisation of EEG data that lack channel positions. Channel names must match the montage after renaming.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/meeg/mne/raw` |
+| 📤 **Outputs** | `neuro/meeg/mne/raw` · `generic/image/png` · `report/html` |
+| 🐳 **Container** | `brainlifemeeg/mne:1.12.1` |
+| ⚙️ **Resources** | 10 GB memory · 0.25 h walltime |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.769](https://doi.org/10.25663/brainlife.app.769) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `raw` | `neuro/meeg/mne/raw` | yes | Continuous MEG/EEG recording in MNE raw .fif format. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `out_dir` | `neuro/meeg/mne/raw` | Raw data with channel positions from the montage (raw.fif). |
+| `out_figs` | `generic/image/png` | Montage plot |
+| `out_report` | `report/html` | HTML report of the process |
+
+<details>
+<summary><b>⚙️ Parameters</b> (2)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `montage` | enum |  | Name of the standard MNE montage to apply. Options: `standard_1005`, `standard_1020`, `standard_alphabetic`, `standard_postfixed`, `standard_prefixed`, `standard_primed`, `biosemi16`, `biosemi32`, `biosemi64`, `biosemi128`, `biosemi160`, `biosemi256`, `easycap-M1`, `easycap-M10`, `EGI-256`, `GSN-HydroCel-32`, `GSN-HydroCel-64_1.0`, `GSN-HydroCel-65_1.0`, `GSN-HydroCel-128`, `GSN-HydroCel-129`, `GSN-HydroCel-256`, `GSN-HydroCel-257`, `mgh60`, `mgh70`, `artinis-octamon`, `artinis-brite23`, `brainproducts-RNP-BA-128`. |
+| `rename_channels` | string |  | If the names of channels in your data acquisition system are different from the names in a standard montage, you can use this option to rename the channels in the montage to match your data file (e.g. 'Cz' in 'GSN-HydroCel-257' can be named 'E257' in older EGI acquisition software). Usage: type in name of the channel in the montage, dash, and the name used in your dataset (Cz-E257, or E001-E1, for example). |
+
+</details>
+
+📚 **References used by this App:**
+- Gramfort A, et al. MEG and EEG data analysis with MNE-Python. Front Neurosci 7(267):1-13 (2013). [doi:10.3389/fnins.2013.00267](https://doi.org/10.3389/fnins.2013.00267)
+
+<!-- brainlife-app:end -->
+
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.769-blue.svg)](https://doi.org/10.25663/brainlife.app.769)
 
 ## Description
